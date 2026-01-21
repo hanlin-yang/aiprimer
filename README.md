@@ -99,6 +99,46 @@ BLAST_DB_PATH=/path/to/blast/databases
 SECRET_KEY=your_secret_key
 ```
 
+## Frontend Setup
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+
+### Installation and Running
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`.
+
+### Environment Variables
+
+Create a `.env` file in the `frontend` directory with the following variables:
+
+```env
+# API Base URL
+VITE_API_URL=http://localhost:8000/api/v1
+```
+
+If not set, the default API URL is `/api/v1` (relative path, assuming the frontend is served from the same domain as the backend).
+
+### API Configuration
+
+The frontend uses Axios to communicate with the backend API. The API client is configured in `frontend/src/api/client.ts` with:
+
+- Base URL: Configurable via `VITE_API_URL` environment variable
+- Timeout: 120 seconds for primer design requests
+- Error handling: Custom `ApiError` class for API errors
+
 ## Running the Application
 
 ### Development
