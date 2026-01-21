@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(set HTTP_PROXY=)",
+      "Bash(set HTTPS_PROXY=)",
+      "Bash(set http_proxy=)",
+      "Bash(set https_proxy=)",
+      "Bash(pip config:*)",
+      "Bash(python:*)",
+      "Bash(cmd /c \"set NO_PROXY=* && pip install fastapi uvicorn pydantic -i https://pypi.tuna.tsinghua.edu.cn/simple\")",
+      "Bash(powershell -Command \"$env:NO_PROXY=''*''; pip install fastapi uvicorn pydantic -i https://pypi.tuna.tsinghua.edu.cn/simple\")",
+      "Bash(reg add \"HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Internet Settings\" /v ProxyEnable /t REG_DWORD /d 0 /f)",
+      "Bash(powershell -Command \"Set-ItemProperty -Path ''HKCU:\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Internet Settings'' -Name ProxyEnable -Value 0\")",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite build)"
+    ]
+  }
+}

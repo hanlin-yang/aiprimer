@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primer Design Report - {{ data.target_gene }}</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .meta {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.85;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--gray-700);
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .icon {
+            font-size: 24px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .gauge-container {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(180deg, var(--gray-50), white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .gauge-container h4 {
+            margin-top: 8px;
+            color: var(--gray-700);
+            font-size: 14px;
+        }
+
+        /* Primer Table */
+        .primer-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+
+        .primer-table th,
+        .primer-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .primer-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+
+        .primer-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .primer-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .primer-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .primer-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .primer-table tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* Sequence Display */
+        .sequence {
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--gray-200);
+            display: inline-block;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Warning List */
+        .warning-list {
+            list-style: none;
+        }
+
+        .warning-item {
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .warning-item:hover {
+            transform: translateX(4px);
+        }
+
+        .warning-item.warning {
+            background: linear-gradient(135deg, #fffbeb, #fefce8);
+            border-left: 4px solid var(--warning);
+        }
+
+        .warning-item.error,
+        .warning-item.critical {
+            background: linear-gradient(135deg, #fef2f2, #fff1f2);
+            border-left: 4px solid var(--danger);
+        }
+
+        .warning-item.info {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left: 4px solid var(--info);
+        }
+
+        .warning-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .warning-content h4 {
+            font-size: 14px;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+
+        .warning-content p {
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .warning-suggestion {
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--gray-500);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        /* AI Suggestion Box */
+        .ai-suggestion {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid var(--primary);
+            padding: 24px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .ai-suggestion h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-suggestion p {
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        /* Gel Container */
+        .gel-container {
+            text-align: center;
+            padding: 24px;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+
+        .gel-legend {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 12px;
+            padding: 24px;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 32px;
+        }
+
+        .footer-logo {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-top: 8px;
+        }
+
+        .compliance-badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .compliance-badge {
+            padding: 4px 10px;
+            background: var(--gray-100);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--gray-700);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .primer-table {
+                font-size: 12px;
+            }
+
+            .sequence {
+                max-width: 150px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid var(--gray-300);
+                page-break-inside: avoid;
+            }
+
+            .header {
+                color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🧬 Primer Design Report</h1>
+            <p class="subtitle">Automated primer design analysis for <strong>{{ data.target_gene }}</strong></p>
+            <div class="meta">
+                <div class="meta-item">
+                    <span>📋</span>
+                    <span><strong>Task:</strong> {{ data.task_type }}</span>
+                </div>
+                <div class="meta-item">
+                    <span>🔖</span>
+                    <span><strong>Request ID:</strong> {{ data.request_id[:12] }}...</span>
+                </div>
+                <div class="meta-item">
+                    <span>⏱️</span>
+                    <span><strong>Time:</strong> {{ data.computation_time_ms }}ms</span>
+                </div>
+                <div class="meta-item">
+                    <span>📅</span>
+                    <span><strong>Generated:</strong> {{ data.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Risk Dashboard -->
+        {% if visualizations.risk_gauge_svg or visualizations.specificity_gauge_svg %}
+        <section class="card">
+            <h2><span class="icon">📊</span> Risk Assessment Dashboard</h2>
+            <div class="dashboard">
+                {% if visualizations.risk_gauge_svg %}
+                <div class="gauge-container">
+                    {{ visualizations.risk_gauge_svg | safe }}
+                    <h4>Overall Design Risk</h4>
+                </div>
+                {% endif %}
+                {% if visualizations.specificity_gauge_svg %}
+                <div class="gauge-container">
+                    {{ visualizations.specificity_gauge_svg | safe }}
+                    <h4>Off-Target Risk</h4>
+                </div>
+                {% endif %}
+                {% if visualizations.dimer_gauge_svg %}
+                <div class="gauge-container">
+                    {{ visualizations.dimer_gauge_svg | safe }}
+                    <h4>Dimer Formation Risk</h4>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Best Primer Pair -->
+        {% if data.best_pair %}
+        <section class="card">
+            <h2><span class="icon">🏆</span> Recommended Primer Pair</h2>
+            <table class="primer-table">
+                <thead>
+                    <tr>
+                        <th>Direction</th>
+                        <th>Sequence (5' → 3')</th>
+                        <th>Length</th>
+                        <th>Tm</th>
+                        <th>GC%</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Forward ➡️</strong></td>
+                        <td><code class="sequence">{{ data.best_pair.forward.sequence }}</code></td>
+                        <td>{{ data.best_pair.forward.length }} bp</td>
+                        <td>{{ data.best_pair.forward.tm | format_tm }}</td>
+                        <td>{{ data.best_pair.forward.gc_percent | format_gc }}</td>
+                        <td>{{ data.best_pair.forward.start_position }}-{{ data.best_pair.forward.end_position }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reverse ⬅️</strong></td>
+                        <td><code class="sequence">{{ data.best_pair.reverse.sequence }}</code></td>
+                        <td>{{ data.best_pair.reverse.length }} bp</td>
+                        <td>{{ data.best_pair.reverse.tm | format_tm }}</td>
+                        <td>{{ data.best_pair.reverse.gc_percent | format_gc }}</td>
+                        <td>{{ data.best_pair.reverse.start_position }}-{{ data.best_pair.reverse.end_position }}</td>
+                    </tr>
+                    {% if data.best_pair.probe %}
+                    <tr>
+                        <td><strong>Probe 🔬</strong></td>
+                        <td><code class="sequence">{{ data.best_pair.probe.sequence }}</code></td>
+                        <td>{{ data.best_pair.probe.length }} bp</td>
+                        <td>{{ data.best_pair.probe.tm | format_tm }}</td>
+                        <td>{{ data.best_pair.probe.gc_percent | format_gc }}</td>
+                        <td>{{ data.best_pair.probe.start_position }}-{{ data.best_pair.probe.end_position }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <div class="stats-row">
+                <span class="badge badge-info">
+                    📏 Product Size: {{ data.best_pair.product_size }} bp
+                </span>
+                <span class="badge {% if data.best_pair.tm_difference <= 1 %}badge-success{% elif data.best_pair.tm_difference <= 3 %}badge-warning{% else %}badge-danger{% endif %}">
+                    🌡️ ΔTm: {{ "%.1f"|format(data.best_pair.tm_difference) }}°C
+                </span>
+                <span class="badge {% if data.best_pair.dimer_risk_score < 0.3 %}badge-success{% elif data.best_pair.dimer_risk_score < 0.6 %}badge-warning{% else %}badge-danger{% endif %}">
+                    🔗 Dimer Risk: {{ "%.0f"|format(data.best_pair.dimer_risk_score * 100) }}%
+                </span>
+                {% if data.best_pair.dimer_delta_g %}
+                <span class="badge badge-info">
+                    ⚡ ΔG: {{ data.best_pair.dimer_delta_g | format_dg }}
+                </span>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- In-Silico Gel -->
+        {% if visualizations.gel_svg %}
+        <section class="card">
+            <h2><span class="icon">🔬</span> In-Silico Gel Electrophoresis</h2>
+            <div class="gel-container">
+                {{ visualizations.gel_svg | safe }}
+            </div>
+            <p class="gel-legend">
+                <strong>M</strong> = DNA Marker Ladder |
+                <strong>P1-P5</strong> = Primer pairs ranked by design quality score
+            </p>
+        </section>
+        {% endif %}
+
+        <!-- All Primer Pairs -->
+        {% if data.primer_pairs and data.primer_pairs | length > 1 %}
+        <section class="card">
+            <h2><span class="icon">📋</span> All Designed Primer Pairs ({{ data.primer_pairs | length }})</h2>
+            <table class="primer-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Forward Primer</th>
+                        <th>Reverse Primer</th>
+                        <th>Product</th>
+                        <th>ΔTm</th>
+                        <th>Penalty</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pair in data.primer_pairs %}
+                    <tr>
+                        <td><strong>#{{ pair.pair_id + 1 }}</strong></td>
+                        <td><code class="sequence">{{ pair.forward.sequence }}</code></td>
+                        <td><code class="sequence">{{ pair.reverse.sequence }}</code></td>
+                        <td>{{ pair.product_size }} bp</td>
+                        <td>{{ "%.1f"|format(pair.tm_difference) }}°C</td>
+                        <td>{{ "%.2f"|format(pair.penalty_score) }}</td>
+                        <td>
+                            {% if pair.requires_optimization %}
+                            <span class="badge badge-warning">Needs Review</span>
+                            {% else %}
+                            <span class="badge badge-success">Good</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        {% endif %}
+
+        <!-- Warnings Section -->
+        {% if data.structural_warnings or data.variant_warnings %}
+        <section class="card">
+            <h2><span class="icon">⚠️</span> Warnings & Alerts</h2>
+            <ul class="warning-list">
+                {% for warning in data.structural_warnings %}
+                <li class="warning-item {{ warning.severity }}">
+                    <span class="warning-icon">
+                        {% if warning.severity == 'critical' %}🔴
+                        {% elif warning.severity == 'error' %}🟠
+                        {% elif warning.severity == 'warning' %}🟡
+                        {% else %}ℹ️{% endif %}
+                    </span>
+                    <div class="warning-content">
+                        <h4>{{ warning.code }}</h4>
+                        <p>{{ warning.message }}</p>
+                        {% if warning.suggestion %}
+                        <div class="warning-suggestion">
+                            <span>💡</span>
+                            <span>{{ warning.suggestion }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+
+                {% for warning in data.variant_warnings %}
+                <li class="warning-item warning">
+                    <span class="warning-icon">🧬</span>
+                    <div class="warning-content">
+                        <h4>Variant Conflict Detected</h4>
+                        <p>
+                            {% if warning is mapping %}
+                            Primer: {{ warning.primer }} |
+                            Variant: {{ warning.variant_id or warning.variant }} |
+                            MAF: {{ "%.2f"|format(warning.maf * 100 if warning.maf else 0) }}% |
+                            Severity: {{ warning.severity or 'medium' }}
+                            {% else %}
+                            {{ warning }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        <!-- AI Suggestion -->
+        {% if data.ai_suggestion %}
+        <section class="card">
+            <h2><span class="icon">🤖</span> AI Analysis & Recommendations</h2>
+            <div class="ai-suggestion">
+                <h3>
+                    <span>🧠</span>
+                    <span>Expert System Recommendation</span>
+                </h3>
+                <p>{{ data.ai_suggestion }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Specificity Results -->
+        {% if data.specificity_result %}
+        <section class="card">
+            <h2><span class="icon">🎯</span> Specificity Analysis</h2>
+            <div class="stats-row" style="border-top: none; padding-top: 0; margin-top: 0;">
+                <span class="badge {% if data.specificity_result.is_specific %}badge-success{% else %}badge-danger{% endif %}">
+                    {% if data.specificity_result.is_specific %}✅ Specific{% else %}❌ Non-specific{% endif %}
+                </span>
+                <span class="badge badge-info">
+                    Perfect Matches: {{ data.specificity_result.num_perfect_matches }}
+                </span>
+                <span class="badge badge-info">
+                    Specificity Score: {{ "%.0f"|format(data.specificity_result.specificity_score * 100) }}%
+                </span>
+            </div>
+
+            {% if data.specificity_result.off_target_hits %}
+            <h4 style="margin-top: 20px; color: var(--gray-700);">Off-Target Hits ({{ data.specificity_result.off_target_hits | length }})</h4>
+            <p style="color: var(--gray-500); font-size: 14px; margin-top: 8px;">
+                Review these potential off-target binding sites before experimental validation.
+            </p>
+            {% endif %}
+
+            {% if data.specificity_result.pseudogene_hits %}
+            <div class="warning-item warning" style="margin-top: 16px;">
+                <span class="warning-icon">⚠️</span>
+                <div class="warning-content">
+                    <h4>Pseudogene Cross-Reactivity</h4>
+                    <p>Potential binding to pseudogenes: {{ data.specificity_result.pseudogene_hits | join(', ') }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <strong>Report Generated:</strong> {{ generated_at }} |
+                <strong>Computation Time:</strong> {{ data.computation_time_ms }}ms |
+                <strong>Version:</strong> {{ report_version }}
+            </p>
+            <p class="footer-logo">
+                🧬 Bio-AI-SaaS Primer Design Platform
+            </p>
+            <div class="compliance-badges">
+                <span class="compliance-badge">FDA 21 CFR Part 11</span>
+                <span class="compliance-badge">ISO 13485</span>
+                <span class="compliance-badge">GLP Compliant</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
